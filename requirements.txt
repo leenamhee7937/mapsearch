@@ -1,2 +1,5 @@
 folium
-streamlit_folium 
+streamlit_folium
+pandas
+ploty
+koreanize-mapotlib

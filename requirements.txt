@@ -1,5 +1,5 @@
 folium
 streamlit_folium
-pandas
-ploty
-koreanize-mapotlib
+pandas>=1.3.0
+plotly>=5.0.0
+

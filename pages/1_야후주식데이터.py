@@ -1,12 +1,10 @@
 import streamlit as st
 import yfinance as yf
-import pandas as pd
 import plotly.graph_objects as go
 
 st.set_page_config(layout="wide")
 st.title("🇰🇷 한국 시가총액 Top 10 주가 변동 (최근 1년)")
 
-# KRX 시총 상위 10개 기업 (2024 기준)
 top10_krx = {
     "삼성전자": "005930.KS",
     "LG에너지솔루션": "373220.KS",
@@ -20,16 +18,16 @@ top10_krx = {
     "카카오": "035720.KS"
 }
 
-with st.spinner("📥 데이터를 불러오는 중입니다..."):
-    data = yf.download(list(top10_krx.values()), period="1y")["Adj Close"]
-    data.columns = list(top10_krx.keys())
+with st.spinner("📥 주가 데이터를 불러오는 중입니다..."):
+    data = yf.download(list(top10_krx.values()), period="1y", group_by='ticker')
+    adj_close = data.xs('Adj Close', level=1, axis=1)
+    adj_close.columns = list(top10_krx.keys())
 
-# ✅ Plotly 시각화
 fig = go.Figure()
-for company in data.columns:
+for company in adj_close.columns:
     fig.add_trace(go.Scatter(
-        x=data.index,
-        y=data[company],
+        x=adj_close.index,
+        y=adj_close[company],
         mode='lines',
         name=company
     ))

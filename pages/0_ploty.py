@@ -41,25 +41,47 @@ def clean_data(series):
 male_pop = clean_data(df_mf_region[male_cols].iloc[0])
 female_pop = clean_data(df_mf_region[female_cols].iloc[0])
 total_pop = clean_data(df_total_region[total_cols].iloc[0])
+male_neg = [-x for x in male_pop]
 
-# ✅ 그래프 1: 연령별 전체 인구 (세로 막대)
+# ✅ 그래프 1: 전체 인구 막대그래프
 bar_fig = go.Figure()
-bar_fig.add_trace(go.Bar(x=ages, y=total_pop, name='전체', marker=dict(color='indianred')))
+bar_fig.add_trace(go.Bar(
+    x=ages,
+    y=total_pop,
+    name='전체',
+    marker=dict(color='indianred', opacity=0.8),
+    hovertemplate='<b>%{x}</b>세<br>인구 수: %{y:,}명<extra></extra>',
+))
+
 bar_fig.update_layout(
     title=f'{selected_region} - 연령별 인구 합계 (2025년 4월)',
     xaxis_title='연령',
     yaxis_title='인구 수',
     bargap=0.2,
+    hovermode='closest',
     height=500
 )
 
-# ✅ 그래프 2: 인구 피라미드 (남녀 좌우로 구분)
-# 여성 인구는 양수, 남성 인구는 음수로 뒤집음
-male_neg = [-x for x in male_pop]
-
+# ✅ 그래프 2: 피라미드 그래프 (남녀 좌우)
 pyramid_fig = go.Figure()
-pyramid_fig.add_trace(go.Bar(y=ages, x=male_neg, name='남성', orientation='h', marker_color='blue'))
-pyramid_fig.add_trace(go.Bar(y=ages, x=female_pop, name='여성', orientation='h', marker_color='pink'))
+
+pyramid_fig.add_trace(go.Bar(
+    y=ages,
+    x=male_neg,
+    name='남성',
+    orientation='h',
+    marker=dict(color='rgba(0, 102, 204, 0.8)'),
+    hovertemplate='<b>%{y}</b>세<br>남성: %{x:,}명<extra></extra>',
+))
+
+pyramid_fig.add_trace(go.Bar(
+    y=ages,
+    x=female_pop,
+    name='여성',
+    orientation='h',
+    marker=dict(color='rgba(255, 105, 180, 0.8)'),
+    hovertemplate='<b>%{y}</b>세<br>여성: %{x:,}명<extra></extra>',
+))
 
 pyramid_fig.update_layout(
     title=f'연령별 남녀 인구 피라미드 ({selected_region})',
@@ -67,10 +89,11 @@ pyramid_fig.update_layout(
     yaxis_title='연령',
     barmode='relative',
     bargap=0.1,
-    height=700
+    height=700,
+    hovermode='closest',
 )
 
-# Streamlit 출력
+# 📌 Streamlit 출력
 st.title("👨‍👩‍👧‍👦 2025년 4월 시도별 연령별 인구 통계")
 st.plotly_chart(bar_fig, use_container_width=True)
 st.plotly_chart(pyramid_fig, use_container_width=True)
